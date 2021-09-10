@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pmg.mapper.BoardMapper">
+
+	<!-- 글조회 -->
+	<select id="read" resultType="com.pmg.domain.BoardVO">
+		select * from board
+		where
+		bno =
+		#{bno}
+	</select>
+
+	<!-- 글리스트 -->
+	<select id="getList" resultType="com.pmg.domain.BoardVO">
+		select * from board
+		order by bno
+		desc
+	</select>
+
+	<!-- 글작성 -->
+	<insert id="write">
+		insert into
+		board(bno, id, title, content)
+		values(
+		seq_bno.nextval
+		,#{id}
+		,#{title}
+		,#{content}
+		)
+	</insert>
+
+	<!-- 글수정 -->
+	<update id="update">
+		update board
+		set
+		title = #{title}
+		,content = #{content}
+		,updateDate = sysdate
+		where bno =
+		#{bno}
+	</update>
+
+	<!-- 글삭제 -->
+	<delete id="delete">
+		delete from board
+		where
+		bno=#{bno}
+	</delete>
+
+	<update id="viewUp">
+		update board
+		set views = views+1
+		where bno =#{bno}
+	</update>
+
+	<select id="listPage" resultType="com.pmg.domain.BoardVO">
+	<![CDATA[ 
+			select * from ( 
+				select 
+					bno, rownum rn, title, content, id, views, regdate, updatedate 
+				from board 
+				where 0 < rownum and rownum <= (#{pageNum}*#{amount})
+				order by bno desc
+				) 
+				where (#{pageNum}-1)*#{amount} < rn
+	]]>
+				<!-- 
+				select * from ( 
+				select 
+					bno, rownum rn, title, content, id, views, regdate, updatedate 
+				from board 
+				where 0 < rownum and rownum <= (#{pageNum}*#{amount})
+				order by bno desc
+				) 
+				where (#{pageNum}-1)*#{amount} < rn  
+				-->
+	</select>
+	<select id="listCount" resultType="int">
+		<![CDATA[
+		select count(bno)
+		from board
+		where bno>0
+		]]>
+	</select>
+
+</mapper>

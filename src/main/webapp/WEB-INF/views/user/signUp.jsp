@@ -1,0 +1,249 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ include file="../common/header.jsp"%>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>signUp</title>
+</head>
+<script>
+	$(function() {
+		let flag = false;
+		const id = $("#id").val();
+		function listPageAjax() {
+			$.ajax({
+				url : "/board/spaList",
+				type : "get",
+				success : function(result) {
+					$("#mainCase").html(result);
+				}
+			});
+		}
+		function logInPageAjax() {
+			$.ajax({
+				url : "/user/logIn",
+				type : "get",
+				success : function(result) {
+					$("#mainCase").html(result);
+				}
+			});
+		}
+		$("#cancle").click(function() {
+			listPageAjax();
+		});
+
+		$("#signUpJnBtn").on("click", function() {
+			signUpCheck();
+		});
+
+		//아이디 중복 검사
+		$("#id").keyup(function() {
+			let ids = $("#id").val().length;
+			let idVal = $("#id").val();
+
+			if (koreanRegEx.test(idVal) == true) {
+				alert("아이디는 영어, 숫자만 사용가능합니다!")
+				$("#id").val("");
+				return false;
+			}
+			if (ids > 4) {
+				$("#idDiv").show();
+				$.ajax({
+					url : "/user/idDup",
+					type : "post",
+					data : {
+						id : idVal
+					},
+					success : function(result) {
+
+						if (result === 0) {
+							$("#idDiv").text("사용가능").css("color", "green");
+							flag = true;
+						} else {
+							$("#idDiv").text("아이디중복").css("color", "red");
+							$("#id").focus();
+							return false;
+						}
+					},
+				});//아작스 끝
+			} else {
+				$("#idDiv").hide();
+			}
+		})
+
+		//회원가입유효성 검사
+		var koreanRegEx = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+		var regExId = /^ [a-zA-Z0-9]{4,20}$/;
+		var regExPhNum = /^\d{3}-\d{3,4}-\d{4}$/;
+		var regExPasswd = /^.*(?=^.{4,20}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;
+		var regExEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[com|net]{3}$/i;
+
+		function autoHypenPhone(str) {
+			str = str.replace(/[^0-9]/g, '');
+			var tmp = '';
+			if (str.length < 4) {
+				return str;
+			} else if (str.length < 7) {
+				tmp += str.substr(0, 3);
+				tmp += '-';
+				tmp += str.substr(3);
+				return tmp;
+			} else if (str.length < 11) {
+				tmp += str.substr(0, 3);
+				tmp += '-';
+				tmp += str.substr(3, 3);
+				tmp += '-';
+				tmp += str.substr(6);
+				return tmp;
+			} else {
+				tmp += str.substr(0, 3);
+				tmp += '-';
+				tmp += str.substr(3, 4);
+				tmp += '-';
+				tmp += str.substr(7);
+				return tmp;
+			}
+			return str;
+		}
+
+		var cellPhone = document.getElementById('phnum');
+		cellPhone.onkeyup = function(event) {
+			event = event || window.event;
+			var _val = this.value.trim();
+			this.value = autoHypenPhone(_val);
+		}
+		function signUpCheck() {
+			//아이디 중복검사
+			if ($.trim($("#id").val()) == "") {
+				alert("아이디를 입력해 주세요!");
+				$("#id").focus();
+				return false;
+			}
+			if (($.trim($("#id").val()).length <= 4)
+					|| ($.trim($("#id").val()).length >= 20)) {
+				alert("아이디를 4~20자 사이로 입력해 주세요!");
+				$("#id").focus();
+				return false;
+			}
+			/* if(regExId.test($("#id").val())==false){
+				alert("아이디는 숫자 및 영어 대소문자 만 사용가능")
+				$("idDiv").hide();
+				return false;
+			}  */
+			if ($.trim($("#phnum").val()) == "") {
+				alert("휴대폰 번호를 입력해 주세요!");
+				$("#phnum").focus();
+				return false;
+			}
+
+			if ($.trim($("#email").val()) == "") {
+				alert("메일을 입력해 주세요!");
+				$("#email").focus();
+				return false;
+			}
+
+			if (!regExEmail.test($("input[id='email']").val())) {
+				alert("이메일을 입력해 주세요!");
+				$("#email").focus();
+				return false;
+			}
+			
+			if ($.trim($("#passwd").val()) == "") {
+				alert("비밀번호를 입력해 주세요!");
+				$("#passwd").focus();
+				return false;
+			}
+			if ($.trim($("#passwdChk").val()) == "") {
+				alert("비밀번호확인을 입력해 주세요!");
+				$("#passwdChk").focus();
+				return false;
+			}
+			if (!regExPhNum.test($("input[id='phnum']").val())) {
+				alert("비밀번호에 특수문자, 문자, 숫자를 포함 하세요!");
+				$("#phnum").focus();
+				return false;
+			}
+			if ($.trim($("#passwd").val()) != $.trim($("#passwdChk").val())) {
+				alert("비번이 다릅니다!");
+				$("#passwd").val("");
+				$("#passwdChk").val("");
+				$("#passwd").focus();
+				return false;
+			}
+			if (!regExPasswd.test($("input[id='passwd']").val())) {
+				alert("비밀번호에 특수문자, 문자, 숫자를 포함 하세요!");
+				$("#passwd").focus();
+				return false;
+			}
+			if (flag == true) {
+				signAjax();
+			}
+		}//회원가입 유효성 끝
+
+		//회원가입 아작스
+		function signAjax() {
+			var params = $("#signUpForm").serialize();
+			$.ajax({
+				url : "/user/signUp",
+				type : "post",
+				data : params,
+				success : function(data) {
+					alert("회원가입 성공");
+					logInPageAjax();
+				},
+				error : function(e) {
+					alert("회원가입 실패");
+					$("#id").focus();
+
+				}
+			});
+		}
+		;//회원가입 아작스끝
+	});
+</script>
+<body>
+	<div id="signUpBox">
+		<div id="center">
+			<form id="signUpForm" method="post">
+				<table border="1" style="text-align: center; width: 500px;">
+					<caption>signUp</caption>
+					<tr>
+						<td>아이디</td>
+						<td><input type="text" id="id" name="id"
+							placeholder="아이디를 입력해주세요" autofocus="autofocus">
+							<div id="idDiv"></div></td>
+					</tr>
+					<tr>
+						<td>휴대번호</td>
+						<td><input type="text" id="phnum" name="phnum"
+							placeholder="010-0000-0000" maxlength="13"></td>
+					</tr>
+					<tr>
+						<td>이메일</td>
+						<td><input type="email" id="email" name="email" placeholder="_______@______"></td>
+					</tr>
+					<tr>
+						<td>비밀번호</td>
+						<td><input type="password" id="passwd" name="passwd"
+							placeholder="비번을 입력해주세요"></td>
+					</tr>
+					<tr>
+						<td>비밀번호확인</td>
+						<td><input type="password" id="passwdChk" name="passwdChk"
+							placeholder="비번확인을 해주세요"></td>
+					</tr>
+				</table>
+				<div>
+					<button type="button" id="signUpJnBtn">가입</button>
+					<button type="button" id="cancle">취소</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>
