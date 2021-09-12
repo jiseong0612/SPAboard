@@ -8,10 +8,7 @@
 <title>mainCase</title>
 <script>
 	$(function() {
-		$("#cancle").click(function() {
-			console.log("test")
-		});
-		function listPageAjax() {
+		const listPageAjax = function() {
 			$.ajax({
 				url : "/board/spaList",
 				type : "get",
@@ -20,9 +17,13 @@
 				}
 			});
 		}
+
+		$("#cancle").click(function() {
+			console.log("test")
+		});
+
 		listPageAjax();
-		
-		
+
 		$("#boardwriteBtn").click(function() {
 			boardWriteCheck();
 		});

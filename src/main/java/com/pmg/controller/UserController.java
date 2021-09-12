@@ -26,12 +26,13 @@ public class UserController {
 	@GetMapping("/")
 	public String mainCase() {
 		log.info("mainCase GetMapping.....................");
-		return "mainCase";
+		return "/common/mainCase";
 	}
 
 	@GetMapping("/signUp")
-	public void signUp() {
+	public String signUp() {
 		log.info("signUp GetMapping.....................");
+		return "items/signUp";
 	}
 
 	@PostMapping("/signUp")
@@ -52,8 +53,9 @@ public class UserController {
 	}
 
 	@GetMapping("/logIn")
-	public void logIn() {
+	public String logIn() {
 		log.info("logIn GetMapping.....................");
+		return "items/logIn";
 	}
 
 	@PostMapping("/logIn")
@@ -77,7 +79,7 @@ public class UserController {
 	public String logOut(HttpSession session) {
 		log.info("logOut GetMapping.....................");
 		session.invalidate();
-		return "/board/spaList";
+		return "/items/spaList";
 
 	}
 

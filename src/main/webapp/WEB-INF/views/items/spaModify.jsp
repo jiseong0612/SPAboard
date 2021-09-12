@@ -1,13 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../common/header.jsp"%>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>spaModify</title>
 <script>
 	$(function() {
 		$("#modify").click(function() {
@@ -21,7 +14,7 @@
 				return false;
 			}
 		});
-		function deleteAjax() {
+		const deleteAjax= function() {
 			var bnoVal = $("#bno").val();
 			$.ajax({
 				url : "/board/spaDelete",
@@ -40,7 +33,7 @@
 				}
 			});
 		}
-		function modifyAjax() {
+		const modifyAjax= function() {
 			
 			var params = $("form").serialize();
 			
@@ -57,7 +50,7 @@
 		$("#list").click(function() {
 			listPageAjax();
 		});
-		function listPageAjax() {
+		const listPageAjax =function() {
 			let params ={
 					pageNum:$("#pageNum").val(),
 					amount:$("#amount").val(),
@@ -113,5 +106,3 @@
 		</form>
 	</div>
 </body>
-
-</html>

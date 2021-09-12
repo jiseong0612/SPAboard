@@ -24,21 +24,33 @@ public class BoardController {
 	@Autowired
 	private BoardService service;
 
+	@GetMapping("/spaList")
+	public String spaList(Criteria cri, Model model) {
+		log.info("spaList GetMapping.....................");
+		List<BoardVO> list = service.listPage(cri);
+		int total = service.listCount();
+		model.addAttribute("list", list);
+		model.addAttribute("paging", new PageMaker(cri, total));
+		return "/items/spaList";
+	}
+
 	@GetMapping("/spaRead")
-	public void spaRead(Model model, Criteria cri) {
+	public String spaRead(Model model, Criteria cri) {
 		log.info("spaRead GetMapping.....................");
 		BoardVO board = service.read(cri.getBno());
 		service.viewUp(cri.getBno());
 		model.addAttribute("board", board);
 		model.addAttribute("cri", cri);
+		return "/items/spaRead";
 	}
 
 	@GetMapping("/spaModify")
-	public void spaModify(Model model, Criteria cri) {
+	public String spaModify(Model model, Criteria cri) {
 		log.info("spaModify GetMapping.....................");
 		BoardVO board = service.read(cri.getBno());
 		model.addAttribute("board", board);
 		model.addAttribute("cri", cri);
+		return "/items/spaModify";
 	}
 
 	@PostMapping("/spaModify")
@@ -58,18 +70,10 @@ public class BoardController {
 		return result;
 	}
 
-	@GetMapping("/spaList")
-	public void spaList(Criteria cri, Model model) {
-		log.info("spaList GetMapping.....................");
-		List<BoardVO> list = service.listPage(cri);
-		int total = service.listCount();
-		model.addAttribute("list", list);
-		model.addAttribute("paging", new PageMaker(cri, total));
-	}
-
 	@GetMapping("/spaWrite")
-	public void spaWrite() {
+	public String spaWrite() {
 		log.info("spaWrite GetMapping.....................");
+		return "/items/spaWrite";
 	}
 
 	@PostMapping("/spaWrite")

@@ -1,25 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../common/header.jsp"%>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>spaList</title>
 <script>
-
 $(function(){
 $(document).ready(function(){
 		//페이지 번호 이동 아작스
 		$('#pagingDiv a').click(function(e){
 			e.preventDefault();
 			$('#pageNum').val($(this).attr("href"));
-			var pageNum = $(this).attr("href");
-			var amount = 10; // 임의로 10을 준다.
-			var params ={pageNum: pageNum , amount :amount};
+			let pageNum = $(this).attr("href");
+			let amount = 10; // 임의로 10을 준다.
+			let params ={pageNum: pageNum , amount :amount};
 			$.ajax({
 				url:"/board/spaList",
 				data : params,
@@ -33,10 +24,10 @@ $(document).ready(function(){
 		//게시글에 pageNum, amount, bno넘기기
 		$(".titles").click(function(e) {
 			e.preventDefault();
-			var bnoVal = $(this).attr('bno');
-			var pageNum =${paging.cri.pageNum }; //일단 1줌
-			var amount = ${paging.cri.amount }; // 임의로 10을 준다.
-			var params ={pageNum: pageNum , amount :amount, bno : bnoVal};
+			let bnoVal = $(this).attr('bno');
+			let pageNum =${paging.cri.pageNum }; //일단 1줌
+			let amount = ${paging.cri.amount }; // 임의로 10을 준다.
+			let params ={pageNum: pageNum , amount :amount, bno : bnoVal};
 			//제목눌렀을때 글상세 아작스.
 			$.ajax({
 				url : "/board/spaRead",
@@ -54,7 +45,7 @@ $(document).ready(function(){
 
 
 	$(function() {
-		function listPageAjax() {
+		const listPageAjax= function() {
 			$.ajax({
 				url : "/board/spaList",
 				type : "get",
@@ -63,8 +54,6 @@ $(document).ready(function(){
 				}
 			});
 		}
-
-
 		$("#userLogOutBtn").click(function() {
 			logOutPageAjax();
 		});
@@ -74,7 +63,7 @@ $(document).ready(function(){
 		$("#boardWriteBtn").click(function() {
 			let id = "${id}";
 			if (id == "") {
-				signUpPageAjax();
+				logInPageAjax();
 			} else {
 				spaWritePageAjax();
 			}
@@ -82,7 +71,7 @@ $(document).ready(function(){
 		$("#signUpBtn").click(function() {
 			signUpPageAjax();
 		});
-		function logInPageAjax() {
+		const logInPageAjax= function() {
 			$.ajax({
 				url : "/user/logIn",
 				type : "get",
@@ -91,7 +80,7 @@ $(document).ready(function(){
 				}
 			});
 		}
-		function spaWritePageAjax() {
+		const spaWritePageAjax= function() {
 			$.ajax({
 				url : "/board/spaWrite",
 				type : "get",
@@ -100,7 +89,7 @@ $(document).ready(function(){
 				}
 			});
 		}
-		function logOutPageAjax() {
+		const logOutPageAjax= function() {
 			$.ajax({
 				url : "/user/logOut",
 				type : "get",
@@ -111,7 +100,7 @@ $(document).ready(function(){
 			});
 		}
 
-		function signUpPageAjax() {
+		const signUpPageAjax= function() {
 			$.ajax({
 				url : "/user/signUp",
 				type : "get",
@@ -124,8 +113,6 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-	<!-- spaWriteBox -->
-	<!-- spaListBox -->
 	<div id="spaListBox">
 		<div id="center">
 			<table border="1" style="text-align: center; width: 600px;">
@@ -237,8 +224,4 @@ $(document).ready(function(){
 			</div>
 		</div>
 	</div>
-	<!-- logInBox -->
-	<!-- signUpBox -->
 </body>
-
-</html>

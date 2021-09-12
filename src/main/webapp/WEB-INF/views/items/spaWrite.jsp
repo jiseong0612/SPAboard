@@ -1,21 +1,25 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../common/header.jsp"%>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>spaWrite</title>
 <script>
 	$(function() {
+		
+		//얼럿
+		const divAlert=(msg)=>{
+			let msgs = msg;
+				$("#divAlert").css("background-color","red").css("color","white");
+				$("#divAlert").html(msgs); //` ${msgs}` 사용이 안된다;
+				$("#divAlert").fadeOut(1500);
+				$("#divAlert").show();
+				return false;
+			}
+		
+		
 		$("#writeBtn").click(function() {
 			boardWriteCheck();
 		});
 
-		function writeAjax() {
+		const writeAjax= function() {
 			var params = $("#spaBoardForm").serialize();
 			$.ajax({
 				url : "/board/spaWrite",
@@ -25,7 +29,7 @@
 					listPageAjax();
 				},
 				error : function(e) {
-					alert("ajax통신 실패!!!");
+					divAlert("ajax통신 실패!!!");
 					console.log(e);
 				}
 			});
@@ -33,7 +37,7 @@
 		$("#list").click(function() {
 			listPageAjax();
 		});
-		function listPageAjax() {
+		const listPageAjax= function() {
 			$.ajax({
 				url : "/board/spaList",
 				type : "get",
@@ -42,14 +46,19 @@
 				}
 			});
 		}
-		function boardWriteCheck() {
+		const boardWriteCheck= function() {
 			if ($.trim($("#title").val()) == "") {
-				alert("제목을 입력해 주세요!");
+				divAlert("제목을 입력해 주세요!");
 				$("#title").focus();
 				return false;
 			}
+			if(($("#title").val()).length > 10){
+				divAlert("너무 길다");
+				$("#title").val("");
+				return false;
+			}
 			if ($.trim($("#content").val()) == "") {
-				alert("내용을 입력해 주세요!");
+				divAlert("내용을 입력해 주세요!");
 				$("#content").focus();
 				return false;
 			}
@@ -90,6 +99,5 @@
 			</form>
 		</div>
 	</div>
+	<div id="divAlert"></div>
 </body>
-
-</html>

@@ -9,8 +9,4 @@
 <title>header</title>
 <link rel="stylesheet" href="../resources/css/style.css">
 <script src="https://code.jquery.com/jquery-latest.js"></script>
-<!-- 불가능 -->
-<!-- <script src="../resources/js/pageMove.js"></script>
-<script src="../resources/js/validation.js"></script>
-<script src="../resources/js/ajax.js"></script> -->
 </head>

@@ -1,17 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../common/header.jsp"%>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>signUp</title>
-</head>
 <script>
 	$(function() {
+		
+		//얼럿
+		const divAlert=function(msg){
+			let msgs = msg;
+				$("#divAlert").html(msgs); //` ${msgs}` 사용이 안된다;
+				$("#divAlert").fadeOut(1500);
+				$("#divAlert").show();
+				return false;
+			}
+		
 		let flag = false;
 		const id = $("#id").val();
 		function listPageAjax() {
@@ -23,7 +24,7 @@
 				}
 			});
 		}
-		function logInPageAjax() {
+		const logInPageAjax= function(){
 			$.ajax({
 				url : "/user/logIn",
 				type : "get",
@@ -46,7 +47,7 @@
 			let idVal = $("#id").val();
 
 			if (koreanRegEx.test(idVal) == true) {
-				alert("아이디는 영어, 숫자만 사용가능합니다!")
+				divAlert("아이디는 영어, 숫자만 사용가능합니다!");
 				$("#id").val("");
 				return false;
 			}
@@ -82,7 +83,7 @@
 		var regExPasswd = /^.*(?=^.{4,20}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;
 		var regExEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[com|net]{3}$/i;
 
-		function autoHypenPhone(str) {
+		const autoHypenPhone=function(str) {
 			str = str.replace(/[^0-9]/g, '');
 			var tmp = '';
 			if (str.length < 4) {
@@ -110,67 +111,67 @@
 			return str;
 		}
 
-		var cellPhone = document.getElementById('phnum');
+		let cellPhone = document.getElementById('phnum');
 		cellPhone.onkeyup = function(event) {
 			event = event || window.event;
-			var _val = this.value.trim();
+			let _val = this.value.trim();
 			this.value = autoHypenPhone(_val);
 		}
-		function signUpCheck() {
+		const signUpCheck= function(){
 			//아이디 중복검사
 			if ($.trim($("#id").val()) == "") {
-				alert("아이디를 입력해 주세요!");
+				divAlert("아이디를 입력해 주세요!");
 				$("#id").focus();
 				return false;
 			}
 			if (($.trim($("#id").val()).length <= 4)
 					|| ($.trim($("#id").val()).length >= 20)) {
-				alert("아이디를 4~20자 사이로 입력해 주세요!");
+				divAlert("아이디를 4~20자 사이로 입력해 주세요!");
 				$("#id").focus();
 				return false;
 			}
 			if ($.trim($("#phnum").val()) == "") {
-				alert("휴대폰 번호를 입력해 주세요!");
+				divAlert("휴대폰 번호를 입력해 주세요!");
 				$("#phnum").focus();
 				return false;
 			}
 			if (!regExPhNum.test($("input[id='phnum']").val())) {
-				alert("올바른 휴대번호를 입력하세요!");
+				divAlert("올바른 휴대번호를 입력하세요!");
 				$("#phnum").focus();
 				return false;
 			}
 
 			if ($.trim($("#email").val()) == "") {
-				alert("메일을 입력해 주세요!");
+				divAlert("메일을 입력해 주세요!");
 				$("#email").focus();
 				return false;
 			}
 
 			if (!regExEmail.test($("input[id='email']").val())) {
-				alert("이메일을 입력해 주세요!");
+				divAlert("이메일을 입력해 주세요!");
 				$("#email").focus();
 				return false;
 			}
 			
 			if ($.trim($("#passwd").val()) == "") {
-				alert("비밀번호를 입력해 주세요!");
+				divAlert("비밀번호를 입력해 주세요!");
 				$("#passwd").focus();
 				return false;
 			}
 			if ($.trim($("#passwdChk").val()) == "") {
-				alert("비밀번호확인을 입력해 주세요!");
+				divAlert("비밀번호확인을 입력해 주세요!");
 				$("#passwdChk").focus();
 				return false;
 			}
 			if ($.trim($("#passwd").val()) != $.trim($("#passwdChk").val())) {
-				alert("비번이 다릅니다!");
+				divAlert("비번이 다릅니다!");
 				$("#passwd").val("");
 				$("#passwdChk").val("");
 				$("#passwd").focus();
 				return false;
 			}
 			if (!regExPasswd.test($("input[id='passwd']").val())) {
-				alert("비밀번호에 특수문자, 문자, 숫자를 포함 하세요!");
+				divAlert("비밀번호에 특수문자, 문자, 숫자를 포함 하세요!");
 				$("#passwd").focus();
 				return false;
 			}
@@ -180,7 +181,7 @@
 		}//회원가입 유효성 끝
 
 		//회원가입 아작스
-		function signAjax() {
+		const signAjax=function() {
 			var params = $("#signUpForm").serialize();
 			$.ajax({
 				url : "/user/signUp",
@@ -191,7 +192,7 @@
 					logInPageAjax();
 				},
 				error : function(e) {
-					alert("회원가입 실패");
+					divAlert("회원가입 실패");
 					$("#id").focus();
 
 				}
@@ -239,6 +240,5 @@
 			</form>
 		</div>
 	</div>
+		<div id="divAlert"></div>
 </body>
-
-</html>

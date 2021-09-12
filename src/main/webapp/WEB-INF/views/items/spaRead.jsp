@@ -1,13 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../common/header.jsp"%>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>spaRead</title>
 <script>
 	$(function() {
 		$("#list").click(function() {
@@ -23,7 +16,7 @@
 			modifyPageAjax(bno); //여기다가 값 3개를 다 줘야한다.
 			}
 		});
-		function listPageAjax() {
+		const listPageAjax= function() {
 			let params ={
 					pageNum:$("#pageNum").val(),
 					amount:$("#amount").val(),
@@ -38,7 +31,7 @@
 				},
 			});
 		}
-		function modifyPageAjax(bnoVal) {
+		const modifyPageAjax= function(bnoVal) {
 			let params ={
 					pageNum:$("#pageNum").val(),
 					amount:$("#amount").val(),
@@ -94,5 +87,3 @@
 	</div>
 
 </body>
-
-</html>
