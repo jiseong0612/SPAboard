@@ -78,7 +78,7 @@
 		//회원가입유효성 검사
 		var koreanRegEx = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
 		var regExId = /^ [a-zA-Z0-9]{4,20}$/;
-		var regExPhNum = /^\d{3}-\d{3,4}-\d{4}$/;
+		var regExPhNum = /^01[016789]-[^0][0-9]{2,3}-[0-9]{3,4}/
 		var regExPasswd = /^.*(?=^.{4,20}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;
 		var regExEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[com|net]{3}$/i;
 
@@ -129,13 +129,13 @@
 				$("#id").focus();
 				return false;
 			}
-			/* if(regExId.test($("#id").val())==false){
-				alert("아이디는 숫자 및 영어 대소문자 만 사용가능")
-				$("idDiv").hide();
-				return false;
-			}  */
 			if ($.trim($("#phnum").val()) == "") {
 				alert("휴대폰 번호를 입력해 주세요!");
+				$("#phnum").focus();
+				return false;
+			}
+			if (!regExPhNum.test($("input[id='phnum']").val())) {
+				alert("올바른 휴대번호를 입력하세요!");
 				$("#phnum").focus();
 				return false;
 			}
@@ -160,11 +160,6 @@
 			if ($.trim($("#passwdChk").val()) == "") {
 				alert("비밀번호확인을 입력해 주세요!");
 				$("#passwdChk").focus();
-				return false;
-			}
-			if (!regExPhNum.test($("input[id='phnum']").val())) {
-				alert("비밀번호에 특수문자, 문자, 숫자를 포함 하세요!");
-				$("#phnum").focus();
 				return false;
 			}
 			if ($.trim($("#passwd").val()) != $.trim($("#passwdChk").val())) {
