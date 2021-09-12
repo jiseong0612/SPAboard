@@ -8,15 +8,6 @@
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 	
-	<!-- interceptor 프로그램 등록 -->
-	<beans:bean id="sampleInterceptor" class="com.pmg.interceptor.Intercep" />
-	<interceptors>
-		<interceptor>
-			<mapping path="/spaRead"/>
-			<beans:ref bean="sampleInterceptor"/>
-		</interceptor>
-	</interceptors>
-
 	<!-- DispatcherServlet Context: defines this servlet's request-processing 
 		infrastructure -->
 
