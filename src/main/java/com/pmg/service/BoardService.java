@@ -2,23 +2,55 @@ package com.pmg.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.pmg.domain.BoardVO;
 import com.pmg.domain.Criteria;
+import com.pmg.mapper.BoardMapper;
+@Service
+public class BoardService{
 
-public interface BoardService {
-	public BoardVO read(Long bno);
+	@Autowired
+	private BoardMapper mapper;
 
-	public int write(BoardVO board);
+	public BoardVO read(Long bno) {
+		BoardVO board = mapper.read(bno);
+		return board;
+	}
 
-	public int update(BoardVO board);
+	public int write(BoardVO board) {
+		int result = mapper.write(board);
+		return result;
+	}
 
-	public int delete(Long bno);
+	public int update(BoardVO board) {
+		System.out.println("BoardServiceImpl........."+board);
+		int result = mapper.update(board);
+		return result;
+	}
 
-	public List<BoardVO> getList();
+	public int delete(Long bno) {
+		int result = mapper.delete(bno);
+		return result;
+	}
 
-	public void viewUp(Long bno);
-	
-	public List<BoardVO> listPage(Criteria cri);
-	
-	public int listCount();
+	public List<BoardVO> getList() {
+		List<BoardVO> list = mapper.getList();
+		return list;
+	}
+
+	public void viewUp(Long bno) {
+		mapper.viewUp(bno);
+	}
+
+	public List<BoardVO> listPage(Criteria cri) {
+		return mapper.listPage(cri);
+	}
+
+	public int listCount() {
+		return mapper.listCount();
+	}
+
+
 }

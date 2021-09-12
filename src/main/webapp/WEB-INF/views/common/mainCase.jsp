@@ -8,6 +8,9 @@
 <title>mainCase</title>
 <script>
 	$(function() {
+		$("#cancle").click(function() {
+			console.log("test")
+		});
 		function listPageAjax() {
 			$.ajax({
 				url : "/board/spaList",

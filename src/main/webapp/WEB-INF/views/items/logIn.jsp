@@ -5,7 +5,7 @@
 <html lang="en">
 <script>
 	$(function() {
-		function listPageAjax() {
+	/* 	const listPageAjax = () =>{
 			$.ajax({
 				url : "/board/spaList",
 				type : "get",
@@ -13,11 +13,14 @@
 					$("#mainCase").html(result);
 				}
 			});
-		}
+		} */
 		$("#cancle").click(function() {
 			listPageAjax();
 		});
-		function signUpPageAjax() {
+		$("#cancle2").click(function() {
+			console.log("test")
+		});
+		const signUpPageAjax =()=>{
 			$.ajax({
 				url : "/user/signUp",
 				type : "get",
@@ -123,7 +126,7 @@
 				<div>
 					<div>
 						<button type="button" id="logInBtn">로그인</button>
-						<button type="button" id="cancle">취소</button>
+						<button type="button" id="cancle2">취소</button>
 						<button type="button" id="signUpBtn">회원가입</button>
 					</div>
 				</div>

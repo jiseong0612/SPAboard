@@ -25,16 +25,19 @@ public class UserController {
 
 	@GetMapping("/")
 	public String mainCase() {
+		log.info("mainCase GetMapping.....................");
 		return "mainCase";
 	}
 
 	@GetMapping("/signUp")
 	public void signUp() {
+		log.info("signUp GetMapping.....................");
 	}
 
 	@PostMapping("/signUp")
 	@ResponseBody
 	public int signUp(UsersVO user, Model model) {
+		log.info("signUp PostMapping.....................");
 		int result = service.create(user);
 		model.addAttribute("result", result);
 		return result;
@@ -43,17 +46,20 @@ public class UserController {
 	@PostMapping("/idDup")
 	@ResponseBody
 	public int idDup(String id) {
+		log.info("idDup PostMapping.....................");
 		int result = service.idDupChk(id);
 		return result;
 	}
 
 	@GetMapping("/logIn")
 	public void logIn() {
+		log.info("logIn GetMapping.....................");
 	}
 
 	@PostMapping("/logIn")
 	@ResponseBody
 	public int logIn(String lgId, String lgPasswd, Model model, HttpServletRequest request) {
+		log.info("logIn PostMapping.....................");
 		HttpSession session = request.getSession();
 		UsersVO user = new UsersVO();
 		user.setId(lgId);
@@ -69,6 +75,7 @@ public class UserController {
 
 	@GetMapping("/logOut")
 	public String logOut(HttpSession session) {
+		log.info("logOut GetMapping.....................");
 		session.invalidate();
 		return "/board/spaList";
 
