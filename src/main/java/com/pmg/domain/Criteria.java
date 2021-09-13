@@ -8,7 +8,7 @@ public class Criteria {
 	private int amount = 10; // 페이지당 데이터 갯수
 	private String type; // t, tc, tcw, cw
 	private String keyword;
-
+	private String id;
 	public Criteria() {
 		this(1, 10);
 	}
@@ -21,4 +21,5 @@ public class Criteria {
 	public String[] getTypeArr() {
 		return type == null ? new String[] {} : type.split(""); // P3 ch15 p339 검색에 동적쿼리적용 3:45
 	}
+	
 }

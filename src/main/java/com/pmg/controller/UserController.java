@@ -47,7 +47,7 @@ public class UserController {
 	@PostMapping("/idDup")
 	@ResponseBody
 	public int idDup(String id) {
-		log.info("idDup PostMapping.....................");
+		log.info("idDup PostMapping....................."+id);
 		int result = service.idDupChk(id);
 		return result;
 	}

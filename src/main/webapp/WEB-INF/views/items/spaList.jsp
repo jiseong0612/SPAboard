@@ -25,7 +25,38 @@
 								<a href="#" id="userLogOutBtn">logOut</a>
 							</div>
 							<div>
-								<span><c:out value="${id } 님" /></span>
+								<span>내가 쓴 글:<input type="checkbox" ${pageMaker.cri.id == id ? "checked":""} id="userContent" name="userContent" ><c:out value="${id } 님" /></span>
+								<script>
+								$(function(){
+									$("#userContent").click(function(){
+									  	if($('#userContent').is(":checked") == true){
+									  		$.ajax({
+									  			url:"/board/spaList",
+									  			data:{id:"${id}"},
+									  			type:"get",
+									  			success:function(result){
+									  				$("#mainCase").html(result);
+									  			},
+									  		});
+									  		
+							   			 }else{
+							   				 $.ajax({
+											url : "/board/spaList",
+											type : "get",
+											success : function(result) {
+												$("#mainCase").html(result);
+											},
+											error : function(request, status, error) {
+												console.log("code:" + request.status
+														+ "\n" + "message:"
+														+ request.responseText + "\n"
+														+ "error:" + error);
+											}
+										});
+							   			 }
+									})
+								});
+								</script>
 							</div>
 						</c:if>
 					</div>
@@ -35,10 +66,19 @@
 						<td>번호</td>
 						<td>제목</td>
 						<td>작성자</td>
-						<td>조회수</td>
-						<td>등록일</td>
-						<td>수정일</td>
+						<td><button id="viewBtn">조회수</button></td>
+						<td><button id="regBtn" style="width: 151px;">등록일</button></td>
+						<td><button id="updateBtn" style="width: 151px;">수정일</button></td>
 					</tr>
+					<script>
+						$(function(){
+							$("#viewBtn, #regBtn, #updateBtn").click(function(){
+								console.log($(this).attr("id"));	
+								});
+
+							
+						});
+					</script>
 				</thead>
 				<tbody>
 					<c:if test="${empty list }">
@@ -71,6 +111,8 @@
                  	<input type="text" name="keyword" value="${pageMaker.cri.keyword }">
                  	<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
              		<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
+             		<input type="hidden" name="id" value="${id }">
+             		
                  	<button class="btn btn-default">search</button>
                  </form>
 				</div>
@@ -91,11 +133,12 @@
 							<a class="page-link" href="${pageMaker.endPage + 1 }">다음</a>
 						</c:if>
 					</div>
-					   <form id="actionForm" method="get" >
+					   <form id="actionForm">
                        		<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
                         	<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
                         	<input type="hidden" name="type" value="TCW">
                  			<input type="hidden" name="keyword" value="${pageMaker.cri.keyword }">
+                 			<input type="hidden" name="id" value="${pageMaker.cri.id }">
                         </form>
 					<script>
 						$(function() {
@@ -128,14 +171,10 @@
 							//글상세 이동
 							$(".move") .on( "click", function(e) {
 												e.preventDefault();
-												let targetBno = $(this).attr(
-														"href");
-												actionForm
-														.append("<input type='hidden' name='bno' value='"+targetBno+"'>");
-												actionForm.attr("action",
-														"/board/get");
-												let params = actionForm
-														.serialize();
+												let targetBno = $(this).attr( "href");
+												actionForm .append("<input type='hidden' name='bno' value='"+targetBno+"'>");
+												actionForm.attr("action", "/board/get");
+												let params = actionForm .serialize();
 
 												$.ajax({
 													url : "/board/spaRead",

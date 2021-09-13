@@ -5,6 +5,11 @@
 <mapper namespace="com.pmg.mapper.BoardMapper">
 	<sql id="criteria">
 		<trim prefix="(" suffix=") and">
+			<if test="id !=null and id !=''">
+					id=#{id}
+				</if>
+		</trim>
+		<trim prefix="(" suffix=") and">
 			<foreach collection="typeArr" item="type" separator="or">
 				<if test="type=='T'.toString()">
 					title like '%'||#{keyword}||'%'

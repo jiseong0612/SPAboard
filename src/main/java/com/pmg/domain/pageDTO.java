@@ -21,9 +21,7 @@ public class pageDTO {
 		this.prev = startPage >1;
 		//										
 		int realEnd = (int)(Math.ceil((total*1.0)/cri.getAmount()));
-		System.out.println("realEnd............"+realEnd);
 		this.endPage = realEnd <= endPage? realEnd : endPage;
-		System.out.println("endPage..........."+endPage);
 		this.next = endPage <realEnd;
 	}
 

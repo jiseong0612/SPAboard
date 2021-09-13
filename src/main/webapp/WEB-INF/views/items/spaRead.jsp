@@ -23,6 +23,28 @@
 			<tr>
 				<td colspan="2"><pre><c:out value="${board.content }" /></pre></td>
 			</tr>
+			<tr>
+				<c:if test="${empty before }">
+					<td>이전글</td><td class="lastContent">마지막 글입니다</td>
+				</c:if>
+				<c:if test="${not empty before	 }">
+					<td>이전글</td><td><a class="swift-link" href="${before.bno }">${before.title }</a></td>
+				</c:if>
+			</tr>
+			<tr>
+				<c:if test="${empty after }">
+					<td>다음글</td><td class="lastContent">마지막 글입니다</td>
+				</c:if>
+				<c:if test="${not empty after }">
+					<td>다음글</td><td><a class="swift-link"href="${before.bno }">${after.title }</a></td>
+				</c:if>
+			</tr>
+			<script>
+				let swiftLink = $(this).attr("class","swift-link").attr("href");
+				console.log(swiftLink);
+			</script>
+			
+			
 		</table>
 		<form id="actionForm">
 			<input type="hidden" name="pageNum" value="${cri.pageNum }">
@@ -30,6 +52,7 @@
 			<input type="hidden" name="bno" value="${board.bno}"> 
 			<input type="hidden" name="type" value="${cri.type}"> 
 			<input type="hidden" name="keyword" value="${cri.keyword}">
+			<input type="hidden" name="id" value="${id }">
 		</form>
 		<div>
 			<button type="button" id="modify">수정</button>
@@ -77,50 +100,6 @@
 					}); 
 				});
 			});
-			/* $("#list").click(function() {
-				listPageAjax();
-			});
-			$("#modify").click(function() {
-				var bno = $("#bno").val();
-				let id = $("#id").val();
-				let sessionid ='${id}';
-				if(id != sessionid){
-					alert("권한이 없습니다.");
-				}else{
-				modifyPageAjax(bno); //여기다가 값 3개를 다 줘야한다.
-				}
-			});
-			const listPageAjax= function() {
-				let params ={
-						pageNum:$("#pageNum").val(),
-						amount:$("#amount").val(),
-						bno :$("#bno").val()
-				}
-				$.ajax({
-					url : "/board/spaList",
-					type : "get",
-					data :params,
-					success : function(result) {
-						$("#mainCase").html(result);
-					},
-				});
-			}
-			const modifyPageAjax= function(bnoVal) {
-				let params ={
-						pageNum:$("#pageNum").val(),
-						amount:$("#amount").val(),
-						bno :$("#bno").val()
-				}
-				$.ajax({
-					url : "/board/spaModify",
-					type : "get",
-					data : params,
-					success : function(result) {
-						$("#mainCase").html(result);
-					}
-				});
-			}
-			}); */
 		</script>
 	</div>
 	<div id="divAlert"></div>
