@@ -3,53 +3,14 @@
 <%@ include file="../common/header.jsp"%>
 <script>
 	$(function() {
-		$("#modify").click(function() {
-			modifyAjax();
-		});
-		$("#delete").click(function() {
-			let con = confirm("정말 삭제하시겠습니까");
-			if (con == true) {
-				deleteAjax();
-			} else {
+		//얼럿
+		const divAlert= function(msg){
+			let msgs = msg;
+				$("#divAlert").html(msgs); //` ${msgs}` 사용이 안된다;
+				$("#divAlert").fadeOut(1500);
+				$("#divAlert").show();
 				return false;
 			}
-		});
-		const deleteAjax= function() {
-			var bnoVal = $("#bno").val();
-			$.ajax({
-				url : "/board/spaDelete",
-				type : "post",
-				data : {
-					bno : bnoVal
-				},
-				success : function() {
-					$.ajax({
-						url:"board/spaList",
-						success:function(result){
-							$("#mainCase").html(result);
-						}
-					});
-				
-				}
-			});
-		}
-		const modifyAjax= function() {
-			
-			var params = $("form").serialize();
-			
-			$.ajax({
-				url : "/board/spaModify",
-				type : "post",
-				data : params,
-				success : function(result) {
-					alert("수정 성공!");
-					listPageAjax();
-				}
-			});
-		}
-		$("#list").click(function() {
-			listPageAjax();
-		});
 		const listPageAjax =function() {
 			let params ={
 					pageNum:$("#pageNum").val(),
@@ -65,13 +26,65 @@
 				},
 			});
 		}
+		const modifyAjax= function() {
+			var params = $("form").serialize();
+			$.ajax({
+				url : "/board/spaModify",
+				type : "post",
+				data : params,
+				success : function(result) {
+					if(result ==='0'){
+						divAlert("삭제에 실패하였습니다.");
+						return false;
+					}else{
+					listPageAjax();
+					}
+				}
+			});
+		}
+		//수정 버튼 클릭
+		$("#modify").click(function() {
+			modifyAjax();
+		});
+		
+		//삭제 버튼 클릭
+		$("#delete").click(function() {
+			let con = confirm("정말 삭제하시겠습니까");
+			if (con == true) {
+				let bno = '${board.bno}';
+		 		$.ajax({
+					url:"/board/spaRemove",
+					data : {bno :"${board.bno }" },
+					type:"post",
+					success:function(result){
+						if(result==='1'){
+							$.ajax({
+								url : "/board/spaList",
+								type : "get",
+								data :bno,
+								success : function(result) {
+									$("#mainCase").html(result);
+								},
+							});
+						}else{
+							return false;
+						}
+					}
+				}); 	
+			} else { //confirm :no
+				return false;
+			}
+		});
+		$("#list").click(function() {
+			listPageAjax();
+		});
 	});
 </script>
 </head>
 <body>
 	<div id="center">
 		<form action="#">
-			<input type="hidden" id="bno" name="bno" value='<c:out value="${cri.bno }"/>'>
+			<input type="hidden" id="bno" name="bno" value='<c:out value="${board.bno }"/>'>
 			<input type="hidden" id="pageNum" name="pageNum" value='<c:out value="${cri.pageNum }"/>'>
 			<input type="hidden" id="amount" name="amount" value='<c:out value="${cri.amount }"/>'>
 			<table border="1" style="text-align: center; width: 600px;">
@@ -105,4 +118,5 @@
 			</div>
 		</form>
 	</div>
+	<div id="divAlert"></div>
 </body>

@@ -79,7 +79,7 @@ public class UserController {
 	public String logOut(HttpSession session) {
 		log.info("logOut GetMapping.....................");
 		session.invalidate();
-		return "/items/spaList";
+		return "redirect:/board/spaList";
 
 	}
 

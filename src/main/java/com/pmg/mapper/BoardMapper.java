@@ -19,7 +19,9 @@ public interface BoardMapper {
 
 	public void viewUp(Long bno);
 
-	public List<BoardVO> listPage(Criteria cri);
+	public List<BoardVO> getListWithPaging(Criteria cri);
 	
 	public int listCount();
+
+	public int getTotal(Criteria cri);
 }

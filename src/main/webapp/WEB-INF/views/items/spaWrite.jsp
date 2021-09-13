@@ -3,56 +3,52 @@
 <%@ include file="../common/header.jsp"%>
 <script>
 	$(function() {
-		
-		//얼럿
-		const divAlert=(msg)=>{
-			let msgs = msg;
-				$("#divAlert").css("background-color","red").css("color","white");
-				$("#divAlert").html(msgs); //` ${msgs}` 사용이 안된다;
-				$("#divAlert").fadeOut(1500);
-				$("#divAlert").show();
-				return false;
-			}
-		
-		
-		$("#writeBtn").click(function() {
-			boardWriteCheck();
-		});
 
-		const writeAjax= function() {
-			var params = $("#spaBoardForm").serialize();
-			$.ajax({
-				url : "/board/spaWrite",
-				type : "post",
-				data : params,
-				success : function(data) {
-					listPageAjax();
-				},
-				error : function(e) {
-					divAlert("ajax통신 실패!!!");
-					console.log(e);
-				}
-			});
-		};
-		$("#list").click(function() {
-			listPageAjax();
-		});
-		const listPageAjax= function() {
+		//얼럿
+		const divAlert = function(msg) {
+			let msgs = msg;
+			$("#divAlert").css("background-color", "red").css("color", "white");
+			$("#divAlert").html(msgs); //` ${msgs}` 사용이 안된다;
+			$("#divAlert").fadeOut(1500);
+			$("#divAlert").show();
+			return false;
+		}
+
+		const goList = function() {
 			$.ajax({
 				url : "/board/spaList",
 				type : "get",
 				success : function(result) {
 					$("#mainCase").html(result);
+				},
+				error : function(request, status, error) {
+					console.log("code:" + request.status + "\n" + "message:"
+							+ request.responseText + "\n" + "error:" + error);
 				}
 			});
 		}
-		const boardWriteCheck= function() {
+		const boardWriteAjax=function(){
+			let params = $('#spaBoardForm').serialize();
+			$.ajax({
+				url:"/board/spaWrite",
+				data:params,
+				type:"post",
+				success:function(result){
+					goList();
+				},
+				error : function(request, status, error) {
+					console.log("code:" + request.status + "\n" + "message:"
+							+ request.responseText + "\n" + "error:" + error);
+				}
+			});
+			}
+		const boardWriteCheck = function() {
 			if ($.trim($("#title").val()) == "") {
 				divAlert("제목을 입력해 주세요!");
 				$("#title").focus();
 				return false;
 			}
-			if(($("#title").val()).length > 10){
+			if (($("#title").val()).length > 30) {
 				divAlert("너무 길다");
 				$("#title").val("");
 				return false;
@@ -62,9 +58,20 @@
 				$("#content").focus();
 				return false;
 			}
-			writeAjax();
+			boardWriteAjax();
 		}
-		
+		//목록 버튼 클릭
+		$("#list").click(function(e) {
+			e.preventDefault();
+			//목록 화면 이동
+			goList();
+		});
+		$("#writeBtn").click(function(e) {
+			e.preventDefault();
+			//유효성 검사
+			boardWriteCheck();
+		});
+
 	});
 </script>
 </head>
@@ -73,7 +80,7 @@
 	<div id="spaWriteBox">
 		<div id="center">
 			<form id="spaBoardForm">
-				<input type="hidden" name="boardId" value="<c:out value="${id}"/>">
+				<input type="hidden" name="id" value="<c:out value="${id}"/>">
 				<table border="1" style="text-align: center; width: 600px;">
 					<caption>spa Write</caption>
 					<tr>
@@ -92,8 +99,6 @@
 					</tr>
 				</table>
 				<div></div>
-			</form>
-			<form>
 				<button type="button" id="writeBtn">작성</button>
 				<button type="button" id="list">목록</button>
 			</form>

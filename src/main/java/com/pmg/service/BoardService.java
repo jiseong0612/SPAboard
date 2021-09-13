@@ -44,13 +44,16 @@ public class BoardService{
 		mapper.viewUp(bno);
 	}
 
-	public List<BoardVO> listPage(Criteria cri) {
-		return mapper.listPage(cri);
+	public List<BoardVO> getListWithPaging(Criteria cri) {
+		return mapper.getListWithPaging(cri);
 	}
 
 	public int listCount() {
 		return mapper.listCount();
 	}
-
+	
+	public int getTotal(Criteria cri) {
+		return mapper.getTotal(cri);
+	}
 
 }
