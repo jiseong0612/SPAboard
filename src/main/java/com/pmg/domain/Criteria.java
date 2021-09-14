@@ -9,6 +9,11 @@ public class Criteria {
 	private String type; // t, tc, tcw, cw
 	private String keyword;
 	private String id;
+	private String mycontentCB;
+	private String sorting;
+	
+	
+	
 	public Criteria() {
 		this(1, 10);
 	}

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pmg.domain.BoardVO;
@@ -26,28 +27,55 @@ public class BoardController {
 	@Autowired
 	private BoardService service;
 	
+	@GetMapping("/sessionRemove")
+	public String sessionRemove(HttpSession session) {
+		log.info("sessionRemove GET..................");
+		
+		String id= (String)session.getAttribute("mycontentCB");
+		System.out.println("삭제될 세션 ...."+ id);
+		session.removeAttribute("mycontentCB");
+		return "redirect:/board/spaList";
+	}
 	@GetMapping("/spaList")
-	public String list(Criteria cri, Model model) {
-		log.info("[spaListGET]"+cri);
+	public String list(HttpServletRequest request, @ModelAttribute("cri") Criteria cri, Model model) {
+		System.out.println(cri.getMycontentCB() + "......................QKQK");
+
+		if (cri.getMycontentCB() != null) {
+			System.out.println("세션생김");
+			HttpSession session = request.getSession();
+			
+			String id= (String)session.getAttribute("id");
+			System.out.println("세션 id값은요?..........."+id);
+			cri.setId(id);
+			session.setAttribute("mycontentCB", cri.getMycontentCB());
+			String myContentCB = (String)session.getAttribute("mycontentCB");
+			System.out.println("세션 mycontentCB값은요?..........."+myContentCB);
+		}
+		log.info("[spaListGET]" + cri);
 		model.addAttribute("list", service.getListWithPaging(cri)); // 이것도 크리테리아
+		model.addAttribute("bno", service.getTotal(cri));
 		model.addAttribute("pageMaker", new pageDTO(cri, service.getTotal(cri)));// 이것도 크리테리아면 만약 30개씩 출력한다 했을때 어떤 모델을
 		return "/items/spaList";
 	}
-	//스프링 시큐리티
-	//로그인페이지 .로그인 성공페이지 로그인 실패 페이지 기존 페이지. 총 jsp가 4개가 된다.
-	//이게 되면 하나로 합쳐라.
+
+	// 스프링 시큐리티
+	// 로그인페이지 .로그인 성공페이지 로그인 실패 페이지 기존 페이지. 총 jsp가 4개가 된다.
+	// 이게 되면 하나로 합쳐라.
 	@GetMapping("/spaRead")
 	public String spaRead(long bno, Model model, @ModelAttribute("cri") Criteria cri) {
-		log.info("[spaReadGET]"+cri);
+		System.out.println("여기 들어왓노이기야 글 번호:" + bno); // 잘 들어옴
+		log.info("[spaReadGET]" + cri);
 		service.viewUp(bno);
 		model.addAttribute("board", service.read(bno));
-		System.out.println("여기찍혀야됨......................................................."+cri.getId());
-		BoardVO before = service.read(bno-1);
-		System.out.println("[spaReadGET]"+before);
-		BoardVO after = service.read(bno+1);
-		System.out.println("[spaReadGET]"+after);
-		model.addAttribute("before",before);
-		model.addAttribute("after",after);
+
+		BoardVO before = service.read(bno - 1); // 이전글
+		System.out.println("[spaReadGET] before :" + before);
+
+		BoardVO after = service.read(bno + 1); // 다음글
+		System.out.println("[spaReadGET] after :" + after);
+
+		model.addAttribute("before", before);
+		model.addAttribute("after", after);
 		return "/items/spaRead";
 	}
 
@@ -65,7 +93,7 @@ public class BoardController {
 
 	@GetMapping("/spaModify")
 	public String spaModify(long bno, Model model, @ModelAttribute("cri") Criteria cri) {
-		log.info("[spaModifyGET]"+cri);
+		log.info("[spaModifyGET]" + cri);
 		model.addAttribute("board", service.read(bno));
 		return "/items/spaModify";
 	}
@@ -73,7 +101,7 @@ public class BoardController {
 	@PostMapping("/spaModify")
 	@ResponseBody
 	public String modify(BoardVO board, Criteria cri, Model model) {
-		log.info("[spaModify]"+cri);
+		log.info("[spaModify]" + cri);
 		if (service.update(board) == 1) {
 			model.addAttribute("pageNum", cri.getPageNum());
 			model.addAttribute("amount", cri.getAmount());

@@ -36,15 +36,9 @@
 					<td>다음글</td><td class="lastContent">마지막 글입니다</td>
 				</c:if>
 				<c:if test="${not empty after }">
-					<td>다음글</td><td><a class="swift-link"href="${before.bno }">${after.title }</a></td>
+					<td>다음글</td><td><a class="swift-link"href="${after.bno }">${after.title }</a></td>
 				</c:if>
 			</tr>
-			<script>
-				let swiftLink = $(this).attr("class","swift-link").attr("href");
-				console.log(swiftLink);
-			</script>
-			
-			
 		</table>
 		<form id="actionForm">
 			<input type="hidden" name="pageNum" value="${cri.pageNum }">
@@ -52,7 +46,6 @@
 			<input type="hidden" name="bno" value="${board.bno}"> 
 			<input type="hidden" name="type" value="${cri.type}"> 
 			<input type="hidden" name="keyword" value="${cri.keyword}">
-			<input type="hidden" name="id" value="${id }">
 		</form>
 		<div>
 			<button type="button" id="modify">수정</button>
@@ -98,6 +91,18 @@
 							$("#mainCase").html(result);
 						},
 					}); 
+				});
+				
+				$(".swift-link").click(function(e){
+					e.preventDefault();
+					 $.ajax({
+						url : "/board/spaRead",
+						type : "get",
+						data : {bno : $(this).attr("href")},
+						success : function(result) {
+							$("#mainCase").html(result);
+						},
+					}) 
 				});
 			});
 		</script>

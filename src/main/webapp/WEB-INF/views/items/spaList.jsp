@@ -24,22 +24,35 @@
 							<div>
 								<a href="#" id="userLogOutBtn">logOut</a>
 							</div>
-							<div>
-								<span>내가 쓴 글:<input type="checkbox" ${pageMaker.cri.id == id ? "checked":""} id="userContent" name="userContent" ><c:out value="${id } 님" /></span>
+							<div>								<%-- ${pageMaker.cri.mycontentCB == checked ? "checked":""} --%>
+								<span>내가 쓴 글:<input type="checkbox"  id="mycontentCB" ${cri.mycontentCB == id? 'checked' : "" } name="mycontentCB" ><c:out value="${id } 님" /></span>
 								<script>
 								$(function(){
-									$("#userContent").click(function(){
-									  	if($('#userContent').is(":checked") == true){
-									  		$.ajax({
+									$("#mycontentCB").click(function(){
+									  	if($('#mycontentCB').is(":checked") == true){	
+									  	//체크박스를 누르면 회원 게시글을 보여준다.
+									  		  $.ajax({
 									  			url:"/board/spaList",
-									  			data:{id:"${id}"},
+									  			data: {mycontentCB :'${id}'} ,
 									  			type:"get",
 									  			success:function(result){
 									  				$("#mainCase").html(result);
 									  			},
-									  		});
+									  		}); 
+									  		//페이지 번호 이동
+												let actionForm=$("#actionForm");
+													$(".page-link").on("click",function(e){
+														e.preventDefault();
+														var targetPage = $(this).attr("href");
+														actionForm .append("<input type='hidden' name='mycontentCB' value='"+'${id}'+"'>");
+														actionForm.find('input[name="pageNum"]').val(targetPage);
+														let params = actionForm.serialize();
+														listPageAjax(params);
+													});
 									  		
 							   			 }else{
+							   				 //세션 제거
+							   				sessionStorage.removeItem("mycontentCB");
 							   				 $.ajax({
 											url : "/board/spaList",
 											type : "get",
@@ -66,14 +79,14 @@
 						<td>번호</td>
 						<td>제목</td>
 						<td>작성자</td>
-						<td><button id="viewBtn">조회수</button></td>
-						<td><button id="regBtn" style="width: 151px;">등록일</button></td>
-						<td><button id="updateBtn" style="width: 151px;">수정일</button></td>
+						<td><button id="viewBtn" name="sorting" value="views">조회수</button></td>
+						<td><button id="regBtn"  name="sorting" value="regdate"style="width: 151px; ">등록일</button></td>
+						<td><button id="updateBtn"name="sorting" value="updatedate" style="width: 151px;">수정일</button></td>
 					</tr>
 					<script>
 						$(function(){
 							$("#viewBtn, #regBtn, #updateBtn").click(function(){
-								console.log($(this).attr("id"));	
+								let sorting = $(this).attr("value");
 								});
 
 							
@@ -87,9 +100,9 @@
 						</tr>
 					</c:if>
 					<c:if test="${not empty list }">
-						<c:forEach var="board" items="${list}">
+						<c:forEach var="board" items="${list}" varStatus="i">
 							<tr>
-								<td><c:out value="${board.bno}" /></td>
+								<td> ${bno - (pageMaker.cri.pageNum-1)*pageMaker.cri.amount - i.index}</td>
 								<td><a class="move" href="${board.bno }"
 									bno="${board.bno }"> <c:out value="${board.title}" />
 								</a></td>
@@ -112,6 +125,7 @@
                  	<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
              		<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
              		<input type="hidden" name="id" value="${id }">
+             		<input type="hidden" name="mycontentCB" value="${mycontentCB }">
              		
                  	<button class="btn btn-default">search</button>
                  </form>
@@ -125,7 +139,7 @@
 						<c:forEach var="num" begin="${pageMaker.startPage}"
 							end="${pageMaker.endPage }">
 				&nbsp;
-				<span class="paginate_button"${pageMaker.cri.pageNum == num ? 'style=" background-color: lemonchiffon; border-radius: 45px;':""} ">
+				<span class="paginate_button"${pageMaker.cri.pageNum == num ? 'style=" background-color: brown; border-radius: 45px;':""} ">
 								<a href="${num }" class="page-link">${num }</a>
 							</span>
 						</c:forEach>
@@ -138,7 +152,8 @@
                         	<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
                         	<input type="hidden" name="type" value="TCW">
                  			<input type="hidden" name="keyword" value="${pageMaker.cri.keyword }">
-                 			<input type="hidden" name="id" value="${pageMaker.cri.id }">
+                 			
+                 		<%-- 	<input type="hidden" name="id" value="${pageMaker.cri.id }"> --%>
                         </form>
 					<script>
 						$(function() {
@@ -160,7 +175,7 @@
 								});
 							}
 							//페이지 번호 이동
-							var actionForm=$("#actionForm");
+							let actionForm=$("#actionForm");
 								$(".page-link").on("click",function(e){
 									e.preventDefault();
 									var targetPage = $(this).attr("href");

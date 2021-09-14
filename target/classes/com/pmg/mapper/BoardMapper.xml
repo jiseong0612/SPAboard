@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.pmg.mapper.BoardMapper">
 	<sql id="criteria">
-		<trim prefix="(" suffix=") and">
+	 	<trim prefix="(" suffix=") and">
 			<if test="id !=null and id !=''">
 					id=#{id}
 				</if>
@@ -26,9 +26,7 @@
 	<!-- 글조회 -->
 	<select id="read" resultType="com.pmg.domain.BoardVO">
 		select * from board
-		where
-		bno =
-		#{bno}
+		where bno = #{bno}
 	</select>
 
 	<!-- 글리스트 -->
@@ -74,21 +72,21 @@
 		where bno =#{bno}
 	</update>
 
-	<select id="getListWithPaging"
-		resultType="com.pmg.domain.BoardVO">
-		<![CDATA[ 
-			select * from (
-				select /*+index_desc(board pk_board)*/ rownum rn, bno, title, id, views, regdate, updatedate
-					from board 
-					where 
-						]]>
-		<include refid="criteria"></include>
-					<![CDATA[ 
-					0< bno and 0<rownum and rownum<=(#{pageNum}*#{amount})
-							)
-			where rn>(#{pageNum}-1)*#{amount}
+	<select id="getListWithPaging" resultType="com.pmg.domain.BoardVO">
+	<![CDATA[ 
+		select * from (
+			select /*+index_desc(board pk_board)*/ rownum rn, bno, title, id, views, regdate, updatedate
+				from board 
+				where 
+					]]>
+					<include refid="criteria"></include>
+				<![CDATA[ 
+				0< bno and 0<rownum and rownum<=(#{pageNum}*#{amount}) order by bno desc
+						)
+		where rn>(#{pageNum}-1)*#{amount}
 		]]>
 	</select>
+	
 	<select id="listCount" resultType="int">
 		<![CDATA[
 		select count(bno)
