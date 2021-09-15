@@ -25,15 +25,15 @@
 								<a href="#" id="userLogOutBtn">logOut</a>
 							</div>
 							<div>								<%-- ${pageMaker.cri.mycontentCB == checked ? "checked":""} --%>
-								<span>내가 쓴 글:<input type="checkbox"  id="mycontentCB" ${cri.mycontentCB == id? 'checked' : "" } name="mycontentCB" ><c:out value="${id } 님" /></span>
+								<span>내가 쓴 글:<input type="checkbox"  id="myContentCB" ${myContentSession == id? 'checked' : "" } name="mycontentCB" ><c:out value="${id } 님" /></span>
 								<script>
 								$(function(){
-									$("#mycontentCB").click(function(){
-									  	if($('#mycontentCB').is(":checked") == true){	
+									$("#myContentCB").click(function(){
+									  	if($('#myContentCB').is(":checked") == true){	
 									  	//체크박스를 누르면 회원 게시글을 보여준다.
+									  	//체크박스용 세션 생성
 									  		  $.ajax({
-									  			url:"/board/spaList",
-									  			data: {mycontentCB :'${id}'} ,
+									  			url:"/board/myContentCB",
 									  			type:"get",
 									  			success:function(result){
 									  				$("#mainCase").html(result);
@@ -44,7 +44,7 @@
 													$(".page-link").on("click",function(e){
 														e.preventDefault();
 														var targetPage = $(this).attr("href");
-														actionForm .append("<input type='hidden' name='mycontentCB' value='"+'${id}'+"'>");
+														actionForm .append("<input type='hidden' name='mycontentCB' value='"+'${mycontentCB}'+"'>");
 														actionForm.find('input[name="pageNum"]').val(targetPage);
 														let params = actionForm.serialize();
 														listPageAjax(params);
@@ -52,9 +52,8 @@
 									  		
 							   			 }else{
 							   				 //세션 제거
-							   				sessionStorage.removeItem("mycontentCB");
 							   				 $.ajax({
-											url : "/board/spaList",
+											url : "/board/sessionRemove",
 											type : "get",
 											success : function(result) {
 												$("#mainCase").html(result);
@@ -127,8 +126,27 @@
              		<input type="hidden" name="id" value="${id }">
              		<input type="hidden" name="mycontentCB" value="${mycontentCB }">
              		
-                 	<button class="btn btn-default">search</button>
+                 	<button class="btn btn-default" id="searchBtn">search</button>
                  </form>
+                 <script>
+                 	$(function(){
+                 		//얼럿
+                 		const divAlert= function(msg){
+                 			let msgs = msg;
+                 				$("#divAlert").html(msgs); //` ${msgs}` 사용이 안된다;
+                 				$("#divAlert").fadeOut(1500);
+                 				$("#divAlert").show();
+                 				return false;
+                 			}
+                 		$("#searchBtn").click(function(){
+                 			if($.trim($('input[name="keyword"]').val())==''){
+                 				divAlert('검색어를 입력하세요');
+                 				return false;
+                 			}
+                 		})
+		
+                 	});
+                 </script>
 				</div>
 			<div id="pagination">
 				<div>
@@ -271,4 +289,5 @@
 			</div>
 		</div>
 	</div>
+	<div id="divAlert">내가${myContentSession }_내내내내가,,,,,${id } 쓴 글</div>
 </body>

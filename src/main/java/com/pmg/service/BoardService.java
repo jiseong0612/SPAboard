@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import com.pmg.domain.BoardVO;
 import com.pmg.domain.Criteria;
 import com.pmg.mapper.BoardMapper;
+
+import jdk.internal.org.jline.utils.Log;
+import lombok.extern.log4j.Log4j;
 @Service
 public class BoardService{
 

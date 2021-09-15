@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pmg.domain.BoardVO;
@@ -27,34 +26,39 @@ public class BoardController {
 	@Autowired
 	private BoardService service;
 	
-	@GetMapping("/sessionRemove")
-	public String sessionRemove(HttpSession session) {
-		log.info("sessionRemove GET..................");
-		
-		String id= (String)session.getAttribute("mycontentCB");
-		System.out.println("삭제될 세션 ...."+ id);
-		session.removeAttribute("mycontentCB");
+	@GetMapping("/myContentCB")
+	public String myContentCB(HttpServletRequest request, Criteria cri) {
+		HttpSession session = request.getSession();
+		//아이디 세션의 아이디값을 가져온다.
+		String id= (String)session.getAttribute("id");
+		//mycontentCB 세션에 유저 아이디 세션 값을 넣어준다.
+		session.setAttribute("myContentSession", id);
+		String myContentSession= (String)session.getAttribute("myContentSession");
+		cri.setMyContentCB(myContentSession);
+		System.out.println("세션값 출력..................."+(String)session.getAttribute("myContentSession"));
+		log.info("[myContentCB]"+cri);
 		return "redirect:/board/spaList";
 	}
+	@GetMapping("/sessionRemove")
+	public String sessionRemove(HttpSession session, Criteria cri) {
+		log.info("sessionRemove GET..................");
+		
+		String myContentSession= (String)session.getAttribute("myContentSession");
+		System.out.println("삭제될 myContentSession 세션 ...."+ myContentSession);
+		session.removeAttribute("myContentSession");
+		log.info("[sessionRemove Get]"+cri);
+		return "redirect:/board/spaList";
+	}
+	
 	@GetMapping("/spaList")
-	public String list(HttpServletRequest request, @ModelAttribute("cri") Criteria cri, Model model) {
-		System.out.println(cri.getMycontentCB() + "......................QKQK");
-
-		if (cri.getMycontentCB() != null) {
-			System.out.println("세션생김");
-			HttpSession session = request.getSession();
-			
-			String id= (String)session.getAttribute("id");
-			System.out.println("세션 id값은요?..........."+id);
-			cri.setId(id);
-			session.setAttribute("mycontentCB", cri.getMycontentCB());
-			String myContentCB = (String)session.getAttribute("mycontentCB");
-			System.out.println("세션 mycontentCB값은요?..........."+myContentCB);
-		}
-		log.info("[spaListGET]" + cri);
-		model.addAttribute("list", service.getListWithPaging(cri)); // 이것도 크리테리아
+	public String list(HttpSession session, @ModelAttribute("cri") Criteria cri, Model model) {
+		String myContentSession= (String)session.getAttribute("myContentSession");
+		cri.setMyContentCB(myContentSession);
+		/* List<BoardVO> list = service.getListWithPaging(cri); */
+		model.addAttribute("list", service.getListWithPaging(cri));
 		model.addAttribute("bno", service.getTotal(cri));
-		model.addAttribute("pageMaker", new pageDTO(cri, service.getTotal(cri)));// 이것도 크리테리아면 만약 30개씩 출력한다 했을때 어떤 모델을
+		model.addAttribute("pageMaker", new pageDTO(cri, service.getTotal(cri)));
+		log.info("[spaListGET]" + cri);
 		return "/items/spaList";
 	}
 
@@ -63,7 +67,6 @@ public class BoardController {
 	// 이게 되면 하나로 합쳐라.
 	@GetMapping("/spaRead")
 	public String spaRead(long bno, Model model, @ModelAttribute("cri") Criteria cri) {
-		System.out.println("여기 들어왓노이기야 글 번호:" + bno); // 잘 들어옴
 		log.info("[spaReadGET]" + cri);
 		service.viewUp(bno);
 		model.addAttribute("board", service.read(bno));
