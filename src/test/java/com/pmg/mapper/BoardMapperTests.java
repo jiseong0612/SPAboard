@@ -28,7 +28,7 @@ public class BoardMapperTests {
 	@Test
 	public void listPagingTest() {
 		Criteria cri = new  Criteria();
-		cri.setId("user00");
+		cri.setSorting("views");
 		List<BoardVO> list = mapper.getListWithPaging(cri);
 		log.info(list);
 	}

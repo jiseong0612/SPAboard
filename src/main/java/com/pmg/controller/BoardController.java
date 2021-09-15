@@ -26,6 +26,17 @@ public class BoardController {
 	@Autowired
 	private BoardService service;
 	
+	@GetMapping("/sorting")
+	public String sorting(HttpServletRequest request, Criteria cri) {
+		System.out.println("cri.getSorting.............2"+cri.getSorting());
+		HttpSession session = request.getSession();
+		String sorting = cri.getSorting();
+		System.out.println(sorting);
+		log.info("[sorting]"+cri);
+		session.setAttribute("sortingSession", sorting);
+		return "redirect:/board/spaList";
+	}
+	
 	@GetMapping("/myContentCB")
 	public String myContentCB(HttpServletRequest request, Criteria cri) {
 		HttpSession session = request.getSession();
@@ -35,16 +46,12 @@ public class BoardController {
 		session.setAttribute("myContentSession", id);
 		String myContentSession= (String)session.getAttribute("myContentSession");
 		cri.setMyContentCB(myContentSession);
-		System.out.println("세션값 출력..................."+(String)session.getAttribute("myContentSession"));
 		log.info("[myContentCB]"+cri);
 		return "redirect:/board/spaList";
 	}
 	@GetMapping("/sessionRemove")
 	public String sessionRemove(HttpSession session, Criteria cri) {
 		log.info("sessionRemove GET..................");
-		
-		String myContentSession= (String)session.getAttribute("myContentSession");
-		System.out.println("삭제될 myContentSession 세션 ...."+ myContentSession);
 		session.removeAttribute("myContentSession");
 		log.info("[sessionRemove Get]"+cri);
 		return "redirect:/board/spaList";
@@ -53,6 +60,8 @@ public class BoardController {
 	@GetMapping("/spaList")
 	public String list(HttpSession session, @ModelAttribute("cri") Criteria cri, Model model) {
 		String myContentSession= (String)session.getAttribute("myContentSession");
+		String sortingSession= (String)session.getAttribute("sortingSession");
+		cri.setSorting(sortingSession);
 		cri.setMyContentCB(myContentSession);
 		/* List<BoardVO> list = service.getListWithPaging(cri); */
 		model.addAttribute("list", service.getListWithPaging(cri));

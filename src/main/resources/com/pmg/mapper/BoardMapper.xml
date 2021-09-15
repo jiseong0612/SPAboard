@@ -8,6 +8,7 @@
 			<if test="myContentCB !=null and myContentCB !=''">
 					id=#{myContentCB}
 				</if>
+			
 		</trim>
 		<trim prefix="(" suffix=") and">
 			<foreach collection="typeArr" item="type" separator="or">
@@ -82,6 +83,19 @@
 					<include refid="criteria"></include>
 				<![CDATA[ 
 				0< bno and 0<rownum and rownum<=(#{pageNum}*#{amount})
+					]]>
+					
+				<if test="sorting =='views'.toString()">
+					order by views desc, regdate desc, updatedate
+				</if>
+				<if test="sorting =='regdate'.toString()">
+					order by regdate desc, views desc, updatedate
+				</if>
+				<if test="sorting =='updatedate'.toString()">
+					order by updatedate desc, views desc, regdate
+				</if>		
+					
+				<![CDATA[ 
 						)
 		where rn>(#{pageNum}-1)*#{amount}
 		]]>

@@ -86,7 +86,16 @@
 						$(function(){
 							$("#viewBtn, #regBtn, #updateBtn").click(function(){
 								let sorting = $(this).attr("value");
-								});
+							 	$.ajax({
+									url:"/board/sorting",
+									data : {sorting : sorting},
+									success:function(result){
+										$("#mainCase").html(result);
+									},
+								}) 
+								
+			
+							});
 
 							
 						});
@@ -138,7 +147,7 @@
                  				$("#divAlert").show();
                  				return false;
                  			}
-                 		$("#searchBtn").click(function(){
+                  		$("#searchBtn").click(function(){
                  			if($.trim($('input[name="keyword"]').val())==''){
                  				divAlert('검색어를 입력하세요');
                  				return false;
@@ -244,7 +253,6 @@
 									}
 								});
 
-								signUpPageAjax();
 							});
 							$("#boardWriteBtn").click(function(e) {
 								e.preventDefault();
@@ -289,5 +297,5 @@
 			</div>
 		</div>
 	</div>
-	<div id="divAlert">내가${myContentSession }_내내내내가,,,,,${id } 쓴 글</div>
+ 	<div id="divAlert"></div> 
 </body>
