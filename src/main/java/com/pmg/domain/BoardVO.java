@@ -7,6 +7,7 @@ import lombok.Data;
 public class BoardVO {
 	private Long bno;
 	private String	id;
+	private Long rn;
 	private String title;
 	private String content;
 	private Long views;

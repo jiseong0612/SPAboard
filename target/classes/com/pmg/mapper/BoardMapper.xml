@@ -83,22 +83,50 @@
 					<include refid="criteria"></include>
 				<![CDATA[ 
 				0< bno and 0<rownum and rownum<=(#{pageNum}*#{amount})
-					]]>
-					
-				<if test="sorting =='views'.toString()">
-					order by views desc, regdate desc, updatedate
-				</if>
-				<if test="sorting =='regdate'.toString()">
-					order by regdate desc, views desc, updatedate
-				</if>
-				<if test="sorting =='updatedate'.toString()">
-					order by updatedate desc, views desc, regdate
-				</if>		
-					
-				<![CDATA[ 
 						)
 		where rn>(#{pageNum}-1)*#{amount}
 		]]>
+	</select>
+	
+	<select id="getListWithSortingPaging" resultType="com.pmg.domain.BoardVO">
+	<![CDATA[ 
+	select * from (
+        select  rownum rn, bno, title, id, views, regdate, updatedate
+            from (
+                select *
+                from board 
+     ]]>
+     			<if test="myContentCB !=null and myContentCB !=''">
+					where id=#{myContentCB}
+				</if>
+				<!--  sortingFilter Desc 정렬-->
+   				<if test="sorting =='viewsDesc'.toString()">
+					order by views desc, regdate desc, updatedate
+				</if>
+				<if test="sorting =='regdateDesc'.toString()">
+					order by regdate desc, views desc, updatedate
+				</if>
+				<if test="sorting =='updatedateDesc'.toString()">
+					order by updatedate desc, views desc, regdate
+				</if>		
+				<!--  sortingFilter Asc 정렬-->
+				<if test="sorting =='viewsAsc'.toString()">
+					order by views asc, regdate desc, updatedate
+				</if>
+				<if test="sorting =='regdateAsc'.toString()">
+					order by regdate asc, views desc, updatedate
+				</if>
+				<if test="sorting =='updatedateAsc'.toString()">
+					order by updatedate asc, views desc, regdate
+				</if>	
+     
+      <![CDATA[               
+            )
+            where 
+                 	0<rownum and rownum<=(#{pageNum}*#{amount})
+          )
+          where rn>(#{pageNum}-1)*#{amount}
+ 	]]>
 	</select>
 	
 	<select id="listCount" resultType="int">

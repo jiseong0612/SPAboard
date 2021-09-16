@@ -27,19 +27,30 @@ public class BoardController {
 	private BoardService service;
 	
 	@GetMapping("/sorting")
-	public String sorting(HttpServletRequest request, Criteria cri) {
-		System.out.println("cri.getSorting.............2"+cri.getSorting());
-		HttpSession session = request.getSession();
-		String sorting = cri.getSorting();
-		System.out.println(sorting);
+	public String sorting(HttpServletRequest request, HttpSession session, Criteria cri) {
+		//sorting(조회수, 등록일, 수정일) 필터값을 가져온다
+		String sortingFilter = cri.getSorting();
+		
+		if(sortingFilter.contains("Desc")) {
+			session.setAttribute("sortingSession", sortingFilter);
+			String sortingSession = (String)session.getAttribute("sortingSession");
+			log.info("[sortirng Desc sortingSession..].................."+sortingSession);
+		}else {
+			//기존 필터세션을 지우고,
+			session.removeAttribute("sortingSession");
+			//새로 들어온 필터조건의 세션을 만든다
+			session.setAttribute("sortingSession", sortingFilter);
+			String sortingSession = (String)session.getAttribute("sortingSession");
+			log.info("[sortirng Asc sortingSession..].................."+sortingSession);
+			
+		}
+		
 		log.info("[sorting]"+cri);
-		session.setAttribute("sortingSession", sorting);
 		return "redirect:/board/spaList";
 	}
 	
 	@GetMapping("/myContentCB")
-	public String myContentCB(HttpServletRequest request, Criteria cri) {
-		HttpSession session = request.getSession();
+	public String myContentCB(HttpSession session, Criteria cri) {
 		//아이디 세션의 아이디값을 가져온다.
 		String id= (String)session.getAttribute("id");
 		//mycontentCB 세션에 유저 아이디 세션 값을 넣어준다.
@@ -53,6 +64,7 @@ public class BoardController {
 	public String sessionRemove(HttpSession session, Criteria cri) {
 		log.info("sessionRemove GET..................");
 		session.removeAttribute("myContentSession");
+		session.removeAttribute("sortingSession");
 		log.info("[sessionRemove Get]"+cri);
 		return "redirect:/board/spaList";
 	}
@@ -63,8 +75,14 @@ public class BoardController {
 		String sortingSession= (String)session.getAttribute("sortingSession");
 		cri.setSorting(sortingSession);
 		cri.setMyContentCB(myContentSession);
-		/* List<BoardVO> list = service.getListWithPaging(cri); */
-		model.addAttribute("list", service.getListWithPaging(cri));
+		
+		  if(sortingSession == null) {
+			log.info("[[spaListGET] getListWithPaging  일반 페이징 처리]");
+			model.addAttribute("list", service.getListWithPaging(cri));
+		}else {
+			log.info("[sortingSession desc 소팅 페이징 처리]");
+			model.addAttribute("list", service.getListWithSortingPaging(cri));
+		}
 		model.addAttribute("bno", service.getTotal(cri));
 		model.addAttribute("pageMaker", new pageDTO(cri, service.getTotal(cri)));
 		log.info("[spaListGET]" + cri);
@@ -79,7 +97,14 @@ public class BoardController {
 		log.info("[spaReadGET]" + cri);
 		service.viewUp(bno);
 		model.addAttribute("board", service.read(bno));
-
+		
+		//rownum으로 계산하는게 좋겠다.
+//		BoardVO board = service.read(bno);
+//		long bn = board.getRn()-1;
+//		long an = board.getRn()+1;
+//		BoardVO bf = new BoardVO();
+		
+		//
 		BoardVO before = service.read(bno - 1); // 이전글
 		System.out.println("[spaReadGET] before :" + before);
 

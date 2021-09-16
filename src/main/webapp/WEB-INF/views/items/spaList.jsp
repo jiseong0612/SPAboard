@@ -13,7 +13,7 @@
 					<div id="headLine">
 						<c:if test="${empty id }">
 							<div>
-								<a href="#" id="logInBtn">login</a> <a href="#" id="signUpBtn">signUp</a>
+								<a id="logInBtn">login</a> <a id="signUpBtn">signUp</a>
 							</div>
 						
 							<div>
@@ -22,12 +22,28 @@
 						</c:if>
 						<c:if test="${not empty id }">
 							<div>
-								<a href="#" id="userLogOutBtn">logOut</a>
+								<a id="userLogOutBtn">logOut</a>
 							</div>
 							<div>								<%-- ${pageMaker.cri.mycontentCB == checked ? "checked":""} --%>
 								<span>내가 쓴 글:<input type="checkbox"  id="myContentCB" ${myContentSession == id? 'checked' : "" } name="mycontentCB" ><c:out value="${id } 님" /></span>
 								<script>
 								$(function(){
+									 //세션 제거
+									const delConditionSession = function(){ 
+										 $.ajax({
+												url : "/board/sessionRemove",
+												type : "get",
+												success : function(result) {
+													$("#mainCase").html(result);
+												},
+												error : function(request, status, error) {
+													console.log("code:" + request.status
+															+ "\n" + "message:"
+															+ request.responseText + "\n"
+															+ "error:" + error);
+												}
+											});
+					   				};
 									$("#myContentCB").click(function(){
 									  	if($('#myContentCB').is(":checked") == true){	
 									  	//체크박스를 누르면 회원 게시글을 보여준다.
@@ -52,19 +68,7 @@
 									  		
 							   			 }else{
 							   				 //세션 제거
-							   				 $.ajax({
-											url : "/board/sessionRemove",
-											type : "get",
-											success : function(result) {
-												$("#mainCase").html(result);
-											},
-											error : function(request, status, error) {
-												console.log("code:" + request.status
-														+ "\n" + "message:"
-														+ request.responseText + "\n"
-														+ "error:" + error);
-											}
-										});
+							   				 delConditionSession();
 							   			 }
 									})
 								});
@@ -78,26 +82,44 @@
 						<td>번호</td>
 						<td>제목</td>
 						<td>작성자</td>
-						<td><button id="viewBtn" name="sorting" value="views">조회수</button></td>
-						<td><button id="regBtn"  name="sorting" value="regdate"style="width: 151px; ">등록일</button></td>
-						<td><button id="updateBtn"name="sorting" value="updatedate" style="width: 151px;">수정일</button></td>
+<!-- 						<td><button id="viewBtn" name="sorting" value="views" >조회수</button></td> -->
+						<td><a id="viewBtn" name="sorting" value="views">조회수</a></td>
+						<td><a id="regBtn" name="sorting" value="regdate">등록일</a></td>
+						<td><a id="updateBtn" name="sorting" value="updatedate">수정일</a></td>
+						<!-- <td><button id="regBtn"  name="sorting" value="regdate" style="width: 151px;">등록일</button></td>
+						<td><button id="updateBtn"name="sorting" value="updatedate" style="width: 151px;">수정일</button></td> -->
 					</tr>
 					<script>
 						$(function(){
-							$("#viewBtn, #regBtn, #updateBtn").click(function(){
-								let sorting = $(this).attr("value");
-							 	$.ajax({
+							const sortingAjax = function(param){
+								$.ajax({
 									url:"/board/sorting",
-									data : {sorting : sorting},
+									data : param,
 									success:function(result){
 										$("#mainCase").html(result);
 									},
-								}) 
-								
-			
-							});
-
+								}); 
+							};
 							
+							$("#viewBtn, #regBtn, #updateBtn").click(function(){
+								let sorting = $(this).attr("value");
+								let sortingSession ='${sortingSession}';
+								
+								if(sortingSession==''){
+									let param = {sorting : sorting+'Desc'};
+									sortingAjax(param);
+								}else if(sortingSession.indexOf('Desc')== -1 ){
+									sorting = sorting+'Desc';
+									let param = {sorting : sorting};
+									console.log(param);
+									sortingAjax(param);
+								}else{
+									sorting = sorting+'Asc';
+									let param = {sorting : sorting};
+									console.log(param);
+									sortingAjax(param);
+								}
+							});
 						});
 					</script>
 				</thead>
@@ -110,16 +132,15 @@
 					<c:if test="${not empty list }">
 						<c:forEach var="board" items="${list}" varStatus="i">
 							<tr>
-								<td> ${bno - (pageMaker.cri.pageNum-1)*pageMaker.cri.amount - i.index}</td>
-								<td><a class="move" href="${board.bno }"
-									bno="${board.bno }"> <c:out value="${board.title}" />
+							<!-- 페이징 넘버 -->
+								 <td> ${bno - (pageMaker.cri.pageNum-1)*pageMaker.cri.amount - i.index}</td>
+								<%-- <td> ${board.rn }</td> --%>
+								<td><a class="move" href="${board.bno }" bno="${board.bno }"> <c:out value="${board.title}" />
 								</a></td>
 								<td><c:out value="${board.id}" /></td>
 								<td><c:out value="${board.views}" /></td>
-								<td><fmt:formatDate value="${board.regdate}"
-										pattern="yyyy-MM-dd HH:mm:ss" /></td>
-								<td><fmt:formatDate value="${board.updateDate}"
-										pattern="yyyy-MM-dd HH:mm:ss" /></td>
+								<td><fmt:formatDate value="${board.regdate}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+								<td><fmt:formatDate value="${board.updateDate}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 							</tr>
 						</c:forEach>
 					</c:if>
@@ -127,8 +148,15 @@
 				</tbody>
 			</table>
 				<div>
-				 <form id="searchForm" action="#" method="get">
-                 	<input type="hidden" name="type" value="TCW">
+				 <form id="searchForm" method="get">
+ 				 <select name="type" id="type">
+               		<option value="TWC" ${pageMaker.cri.type eq 'TWC'? "selected":"" }>전체</option>
+               		<option value="T" ${pageMaker.cri.type eq 'T'? "selected":"" }>제목</option>
+               		<option value="C" ${pageMaker.cri.type eq 'C'? "selected":"" }>내용</option>
+               		<option value="W" ${pageMaker.cri.type eq 'W'? "selected":"" }>작성자</option>
+               		<option value="TC" ${pageMaker.cri.type eq 'TC'? "selected":"" }>제목+내용</option>
+               		<option value="TW" ${pageMaker.cri.type eq 'TW'? "selected":"" }>제목+작성자</option>
+               	</select>
                  	<input type="text" name="keyword" value="${pageMaker.cri.keyword }">
                  	<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
              		<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
@@ -136,24 +164,27 @@
              		<input type="hidden" name="mycontentCB" value="${mycontentCB }">
              		
                  	<button class="btn btn-default" id="searchBtn">search</button>
+                 	<c:if test="${not empty sortingSession || not empty myContentSession ||not empty pageMaker.cri.keyword}">
+                 	<button class="btn btn-default" id="list" style="background-color: yellow">목록</button>
+                 	</c:if>
                  </form>
                  <script>
                  	$(function(){
                  		//얼럿
                  		const divAlert= function(msg){
                  			let msgs = msg;
-                 				$("#divAlert").html(msgs); //` ${msgs}` 사용이 안된다;
+                 				$("#divAlert").html(msgs); 
                  				$("#divAlert").fadeOut(1500);
                  				$("#divAlert").show();
-                 				return false;
-                 			}
+                 			};
+                 		// 검색 서치 버튼 클릭
                   		$("#searchBtn").click(function(){
-                 			if($.trim($('input[name="keyword"]').val())==''){
+                 		 	if($.trim($('input[name="keyword"]').val())==''){
                  				divAlert('검색어를 입력하세요');
                  				return false;
-                 			}
-                 		})
-		
+                 			} 
+                 			let type = $("#type").val();
+                 		});
                  	});
                  </script>
 				</div>
@@ -177,7 +208,7 @@
 					   <form id="actionForm">
                        		<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
                         	<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
-                        	<input type="hidden" name="type" value="TCW">
+                        	<input type="hidden" name="type" value="${pageMaker.cri.type }">
                  			<input type="hidden" name="keyword" value="${pageMaker.cri.keyword }">
                  			
                  		<%-- 	<input type="hidden" name="id" value="${pageMaker.cri.id }"> --%>
@@ -287,6 +318,21 @@
 								e.preventDefault();
 								let params = $("#searchForm").serialize();
 								listPageAjax(params);
+							});
+							$("#list").click(function(){
+								 $.ajax({
+										url : "/board/sessionRemove",
+										type : "get",
+										success : function(result) {
+											$("#mainCase").html(result);
+										},
+										error : function(request, status, error) {
+											console.log("code:" + request.status
+													+ "\n" + "message:"
+													+ request.responseText + "\n"
+													+ "error:" + error);
+										}
+									});
 							});
 						});
 					</script>

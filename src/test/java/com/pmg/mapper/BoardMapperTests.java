@@ -28,7 +28,9 @@ public class BoardMapperTests {
 	@Test
 	public void listPagingTest() {
 		Criteria cri = new  Criteria();
-		cri.setSorting("views");
+		cri.setType("TWC");
+		cri.setKeyword("에어컨");
+		/* cri.setSorting("viewsAsc"); */
 		List<BoardVO> list = mapper.getListWithPaging(cri);
 		log.info(list);
 	}

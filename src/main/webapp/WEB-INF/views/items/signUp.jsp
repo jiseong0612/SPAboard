@@ -209,9 +209,14 @@
 					<caption>signUp</caption>
 					<tr>
 						<td>아이디</td>
-						<td><input type="text" id="id" name="id"
-							placeholder="아이디를 입력해주세요" autofocus="autofocus">
-							<div id="idDiv"></div></td>
+						<td>
+							<input type="text" id="id" name="id" placeholder="아이디를 입력해주세요" autofocus="autofocus">
+							<div class="error_next_box" id="id"  aria-live="assertive">필수 정보입니다.</div>
+							<div class="error_next_box" id="id"  aria-live="assertive">아이디는 영어, 숫자만 사용가능합니다</div>
+							<div class="error_next_box" id="id"  aria-live="assertive">필수 정보입니다.</div>
+							<div class="error_next_box" id="id"  aria-live="assertive">필수 정보입니다.</div>
+						</td>
+							
 					</tr>
 					<tr>
 						<td>휴대번호</td>

@@ -24,18 +24,20 @@
 				<td colspan="2"><pre><c:out value="${board.content }" /></pre></td>
 			</tr>
 			<tr>
-				<c:if test="${(not empty myContentSession && (myContentSession !=before.id) )|| empty before}">
+				<%-- <c:if test="${(not empty myContentSession && (myContentSession !=before.id) )|| empty before}"> --%>
+				<c:if test="${empty before}">
 					<td>이전글</td><td class="lastContent">마지막 글입니다</td>
 				</c:if>
-				<c:if test="${empty myContentSession && not empty before || not empty  myContentSession && (myContentSession ==before.id)}">
+<%-- 				<c:if test="${not empty before || not empty  myContentSession && (myContentSession ==before.id)}"> --%>
+				<c:if test="${not empty before}">
 					<td>이전글</td><td><a class="swift-link" href="${before.bno }">${before.title }</a></td>
 				</c:if>
 			</tr>
 			<tr>
-				<c:if test="${(not empty myContentSession && (myContentSession !=after.id) )|| empty after}">
+				<c:if test="${empty after}">
 					<td>다음글</td><td class="lastContent">마지막 글입니다</td>
 				</c:if>
-				<c:if test="${empty myContentSession && not empty after || not empty  myContentSession && (myContentSession ==after.id)}">
+				<c:if test="${not empty after}">
 					<td>다음글</td><td><a class="swift-link"href="${after.bno }">${after.title }</a></td>
 				</c:if>
 			</tr>

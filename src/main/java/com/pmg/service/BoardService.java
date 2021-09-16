@@ -59,4 +59,8 @@ public class BoardService{
 		return mapper.getTotal(cri);
 	}
 
+	public List<BoardVO> getListWithSortingPaging(Criteria cri) {
+		return mapper.getListWithSortingPaging(cri);
+	}
+
 }
